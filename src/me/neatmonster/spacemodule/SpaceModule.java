@@ -85,6 +85,7 @@ public class SpaceModule extends Module {
     public int                  rPort           = 0;
     public int                  pingPort        = 0;
     public InetAddress          bindAddress;
+    public String          		updateUrl;
 
     public Timer                         timer            = new Timer();
     public Object                        spaceRTK         = null;
@@ -297,6 +298,7 @@ public class SpaceModule extends Module {
         config.addDefault("SpaceRTK.pingPort", 2013);
         config.addDefault("General.backupDirectory", "Backups");
         config.addDefault("General.backupLogs", true);
+        config.addDefault("SpaceModule.updateUrl", "http://dev.drdanick.com/jenkins");
         config.options().copyDefaults(true);
         config.options().header(
                 "#                !!!ATTENTION!!!                #\n" +
@@ -331,6 +333,7 @@ public class SpaceModule extends Module {
         recommended = config.getBoolean("SpaceModule.recommended", true);
         development = config.getBoolean("SpaceModule.development", false);
         artifactPath = config.getString("SpaceModule.artifact", "<automatic>");
+        updateUrl = config.getString("SpaceModule.updateUrl", "http://dev.drdanick.com/jenkins");
         if (recommended && development) {
             config.set("SpaceModule.recommended", recommended = false);
         }
@@ -374,8 +377,8 @@ public class SpaceModule extends Module {
                     f.delete();
             }
 
-            String jenkinsURL = "http://dev.drdanick.com/jenkins"; //TODO: this needs to go into the config
-            artifactManagers.put("Space" + type, new ArtifactManager("Space" + type, version, jenkinsURL, recommended));
+            
+            artifactManagers.put("Space" + type, new ArtifactManager("Space" + type, version, updateUrl, recommended));
             double progressDiv = 100D / artifactManagers.size();
             int minProgress = 0;
             for(ArtifactManager m : artifactManagers.values()) {
